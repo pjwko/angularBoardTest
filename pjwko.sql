@@ -18,11 +18,17 @@ NOCYCLE
 NOCACHE;
 commit;
 
+ CREATE OR REPLACE PROCEDURE TEST_BOARD_DATA AS
+BEGIN 
+ FOR CNT IN 1..100 LOOP
+    insert into board values (SEQ_BID.nextval, '안녕하세요'||SEQ_BID.nextval,'user'||SEQ_BID.nextval,'반가워요',0,sysdate,sysdate,default);
+ END LOOP;
+  COMMIT;
+END;
+/
 
-insert into board values (SEQ_BID.nextval, '안녕하세요','user01','반가워요',0,sysdate,sysdate,default);
+EXEC TEST_BOARD_DATA;
+insert into board values (SEQ_BID.nextval, '테스트'||SEQ_BID.nextval,'user','안녕하세요',0,sysdate,sysdate,default);
+insert into board values (SEQ_BID.nextval, '테스트1'||SEQ_BID.nextval,'user','체크입니다',0,sysdate,sysdate,default);
+
 commit;
-	 update board set BTITLE ='ada', BCONTENT = '123123', MODIFY_DATE = sysdate
-	 WHERE BID = 4;
-select * from board where bTitle like '%안녕%' or bcontent like '%안녕%';
-commit;
-update board set btitle='안녕' where bId BETWEEN  30 and 50;
