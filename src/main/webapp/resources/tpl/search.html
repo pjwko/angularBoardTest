@@ -5,5 +5,5 @@
 	<option value="titleCon">제목&내용</option>
 </select>
 
-<input type="text" placeholder ="입력해주세요" ng-model="keyword">
+<input type="text" placeholder ="입력해주세요" ng-keypress = "searchEnter($event)" ng-model="keyword">
 <button ng-click="search(1)" >검색 </button>

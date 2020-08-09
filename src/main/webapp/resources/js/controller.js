@@ -17,7 +17,8 @@
     	
     	 //페이지 로딩시 함수실행
     	 angular.element(document).ready(function () {
-    		 getList(1)
+    		 getList(1);
+    		 $scope.viewFra = "";	
     		 
     		 //세션 임시지정
     		 $scope.user= "user"
@@ -35,33 +36,41 @@
 		 $scope.all = function(){
 			 $scope.keyword = "";
 			 getList(1)
-		 } 
+		 };
 		 
+		 //검색 엔터키
+		 $scope.searchEnter  = function($event){
+			if($event.originalEvent.charCode == 13){
+				$scope.search(1);
+			}
+		 }
+		 
+		
 
 		 //닫기 버튼
 		 $scope.closeForm= function(){
-			 $("iframe").remove();
-			 $("#bDetail").css("display","none");
-			 $("#wDetail").css("display","none");
-			 $("#bUpDetail").css("display","none");
-			 
+			
 			 $scope.bId ="";
 			 $scope.bTitle ="";
 			 $scope.bContent ="";
+
+			 $scope.viewFra = "";
 			 
+						 
 			 
 		 }
 		 
 		 //게시글 읽기
 		 $scope.read = function(bId){
+			 
 			 getList($scope.currentPage);
 			 var bo= {
     				 bId: bId
     		 }
-			
+			 $scope.viewFra = "read";
 			 bAjax.sendJson('bRead.do', bo).then(function(data){
     			var list = data.data.bo;
-    		
+    			
     			$scope.bId =list.bId;
     			$scope.bWriter = list.bWriter;
     			$scope.bTitle = list.bTitle;
@@ -69,13 +78,14 @@
     			$scope.cDate = $filter('date')(list.createDate, 'yyyy-MM-dd');
     			$scope.mDate = $filter('date')(list.modifyDate, 'yyyy-MM-dd');
     			$scope.bCount = list.bCount;
+ 
+    			$("#content").html($scope.bContent);
     			
+    		
     			$scope.writerCheck = ( $scope.user == $scope.bWriter);
     			
-    			 $("#bDetail").css("display","block");
-    			 $("#wDetail").css("display","none");
-    			 $("#bUpDetail").css("display","none");
-        		 $("#content").html($scope.bContent);
+    			 
+        		 
     			
     		 });
 
@@ -95,7 +105,7 @@
 					 if(msg == "완료"){
 							$scope.bTitle ="";
 							$scope.bContent="";
-							 $("#bDetail").css("display","none");
+							$scope.viewFra = "";
 							
 							getList(1);
 						}
@@ -106,54 +116,57 @@
 
 		 //게시글 수정폼 생성
 		 $scope.update =function(){
-			 $("#bUpDetail").css("display","block");
-			 $("#wDetail").css("display","none");
-			 $("#bDetail").css("display","none");
+			 $scope.viewFra = "write";
+			 $scope.writerCheck = ( $scope.user == $scope.bWriter);
 			 $("iframe").remove();
 			 
 			 nhn.husky.EZCreator.createInIFrame({
 				 oAppRef: oEditors,
-				 elPlaceHolder: "uContent",
+				 elPlaceHolder: "bContent",
 				 sSkinURI: "/test/resources/se2/SmartEditor2Skin.html",
 				 fCreator: "createSEditor2"
 				});
+			 
+			 
+			 $("#bContent").val($scope.bContent);
 			
 			 
 		 }	 
+		 
+		 $scope.updateFrom =function(){
+			
+		 }
          
 		 //게시글 수정
 		$scope.upOk = function(){
-							
-				var bool = true
-				if($scope.bTitle === 'undefined' || $scope.bTitle =="" ){
+			
+			oEditors.getById["bContent"].exec("UPDATE_CONTENTS_FIELD", []);
+			
+			$scope.bContent = $("#bContent").val();
+			
+				var bool = true;
+				if($scope.bTitle === 'undefined' || $scope.bTitle=="" ){
 					alert("제목입력해주세요");
 					bool = false;
 				}else{
-					if($scope.bContents === 'undefined' || $scope.bContents =="" ){
-						alert("내용을입력해주세요");
+					if($scope.bContent === 'undefined' || $scope.bContent.length<17 ){
+						alert("내용은 10글자 이상입력해주세요");
 						bool= false;
 					}else{
-						oEditors.getById["uContent"].exec("UPDATE_CONTENTS_FIELD", []);
-						console.log($scope.bContent);
 						
 						$scope.bo = {
 								bId : $scope.bId,
 								bWriter : $scope.bWriter,
 				       			bTitle : $scope.bTitle,
-								bContent : $("#uContent").val()
+								bContent : $scope.bContent
 							  };
-							
 							
 						bAjax.sendJson('bUpdate.do', $scope.bo)
 			    				.then(function(data){
 			    					var msg =data.data.msg;
 			    					alert(msg)
 									if(msg == "완료"){
-										$scope.bTitle ="";
-										$scope.bContent="";
-										 $("#bUpDetail").css("display","none");
-										
-										getList(1);
+										 $scope.read($scope.bId);									
 									}
 								
 								},function(status){
@@ -165,59 +178,68 @@
 			}
 		}
 		
+	
+		
 		//게시글 작성 폼 생성
 		 $scope.wirterForm = function(){
-			
-			 $("#wDetail").css("display","block");
-			 $("#bDetail").css("display","none");
-			 $("#bUpDetail").css("display","none");
-			
-			 $("iframe").remove();
-			 
-			 $scope.bWriter = $scope.user;
 			 $scope.bTitle ="";
 			 $scope.bContent ="";
-			 
-			 nhn.husky.EZCreator.createInIFrame({
+			 $scope.bWriter = $scope.user; 
+		     $scope.viewFra = "write";	
+		     $scope.writerCheck =false;
+		     $("iframe").remove();
+		   
+		     nhn.husky.EZCreator.createInIFrame({
 				 oAppRef: oEditors,
 				 elPlaceHolder: "bContent",
 				 sSkinURI: "/test/resources/se2/SmartEditor2Skin.html",
 				 fCreator: "createSEditor2"
 				});
+		     
+		     $("#bContent").val("");
+			
+		     
+		   
 		
 		 }
 		 
 		 
 		//게시글 작성 확인
 		$scope.add = function(){
-		
 			
-			var bool = true
+			oEditors.getById["bContent"].exec("UPDATE_CONTENTS_FIELD", []);
+
+			$scope.bContent = $("#bContent").val();
+			
+			
+			var bool = true;
 			if($scope.bTitle === 'undefined' || $scope.bTitle =="" ){
 				alert("제목입력해주세요");
-				bool = true
+				console.log($scope.bContent.length);
+			bool = false;
 			}else{
-				if($scope.bContents === 'undefined' || $scope.bContents =="" ){
-					alert("내용을입력해주세요");
-					bool = true
+		
+				if($scope.bContent === 'undefined' || $scope.bContent.length<17){
+					alert("내용은 10글자 이상입력해주세요");
+					bool = false;
 				}else{
-					oEditors.getById["bContent"].exec("UPDATE_CONTENTS_FIELD", []);
 					
 					$scope.bo = {
 							bWriter : $scope.bWriter,
 			       			bTitle : $scope.bTitle,
-							bContent : $("#bContent").val()
-						  };
-						
-					$http.post('bInsert.do?bo', $scope.bo)	
+							bContent : $scope.bContent
+						  };	
+					
+					
+					$http.post('bInsert.do', $scope.bo)	
 							.then(function(data){
 								var msg =data.data.msg;
 								alert(msg);
 								if(msg == "완료"){
 									$scope.bTitle ="";
 									$scope.bContent="";
+									$scope.viewFra = "";
 									 $("#bContent").val("");
-									 $("#wDetail").css("display","none");
 									 $scope.category="bTitle";
 									 $scope.keyword="";
 									getList(1);
@@ -227,15 +249,16 @@
 								alert(status);
 							});
 				}
-			}		
+			}
+			
 			return bool;
 		}
 
 		 
 		 //검색+페이징용 비동기처리 
     	 var getList = function(currentPage){
-       
-        	 $http({
+    		
+    		 $http({
         		url:"board.do",
         		method:"post",
         		data:$.param({currentPage:currentPage, category: $scope.category,keyword: $scope.keyword}),
@@ -250,31 +273,34 @@
         			$scope.maxPage = pi.maxPage;
         			$scope.paging = []
         			var currentPage =pi.currentPage;
-        			var maxPage = pi.maxPage
+        		
         			for(var i = pi.startPage; i <=pi.endPage; i++){
         				 $scope.paging.push(i);
-        			 }
-        			 
-        			 $scope.pagemove = function(item){
-        				 if(item == 'pre'){
-        					 if(currentPage > 1){
-        						 getList(currentPage-1);
-        					 }
-        				 }else if(item == 'end'){
-        					 getList(maxPage);
-        				 }else if(item == 'next'){
-        					 if(currentPage < maxPage){
-        						 getList(currentPage+1);
-        					 }
-        				 }else{
-        					 getList(item);
-        				 } 
-        			 }
+        			 };
         			
         		},function(error){
         			alert("ajax에러" + error.message)
         		});
          }
+    	 
+    	 //페이지 이동 버튼
+    	 $scope.pagemove = function(item){
+    		 var cp = $scope.currentPage;
+    		 var mp = $scope.maxPage;
+			 if(item == 'pre'){
+				 if( cp > 1){
+					 getList(cp-1);
+				 }
+			 }else if(item == 'end'){
+				 getList(mp);
+			 }else if(item == 'next'){
+				 if(cp < mp){
+					 getList(cp+1);
+				 }
+			 }else{
+				 getList(item);
+			 } 
+		 }
         		
   
 		 

@@ -40,7 +40,7 @@ public class BoardController {
 			@ModelAttribute Search sc) {
 
 		PageInfo pi;
-		System.out.println(sc);
+
 		ArrayList<Board> boardList;
 		if(sc.getKeyword()=="") {
 			sc.setKeyword(null);
@@ -88,7 +88,7 @@ public class BoardController {
 		response.setContentType("application/json; charset=UTF-8");
 		
 		bo = bService.getReadBoard(bo.getbId());
-		System.out.println(bo);
+
 		HashMap<String,Object> map = new HashMap<String, Object>();
 		
 		map.put("bo",bo);
