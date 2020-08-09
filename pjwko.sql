@@ -31,4 +31,15 @@ EXEC TEST_BOARD_DATA;
 insert into board values (SEQ_BID.nextval, '테스트'||SEQ_BID.nextval,'user','안녕하세요',0,sysdate,sysdate,default);
 insert into board values (SEQ_BID.nextval, '테스트1'||SEQ_BID.nextval,'user','체크입니다',0,sysdate,sysdate,default);
 
+ update board set BTITLE ='제목검색용입니다.1', bWriter ='user'
+	 WHERE BID = 77;
+
+ update board set BTITLE ='제목검색용입니다.22', bWriter ='user'
+	 WHERE BID = 20;
+
+ update board set BTITLE ='User검색되나?', bWriter ='User'
+	 WHERE BID = 98;
+     
+update board set BTITLE ='작성자 검색용', bWriter ='작성자'
+	 WHERE BID = 99;
 commit;
