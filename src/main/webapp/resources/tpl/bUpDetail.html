@@ -1,0 +1,40 @@
+			<div style="width:70%; margin-left : 10%; display: none; " id="bUpDetail">
+			
+			<table id="nok" class="table table-bordered" style="background: white;">
+		<tbody>
+			<tr  >
+			<td class="tatd">글번호:</td>
+			<td class="tatd" style="width:10%;"><input type="text" ng-model="bId" class="form-control"  readonly  ></td>
+			<td class="tatd" style="width:10%;" >작성일자</td>
+			<td class="tatd" ><input type="text"  ng-model="cDate" class="form-control" readonly ></td>
+			<td class="tatd">수정일자</td>
+			<td class="tatd"><input type="text"  ng-model="mDate" class="form-control" readonly ></td>
+			</tr>
+			<tr>
+			<td class="tatd">제목:</td>
+			<td style="width:50%;" colspan="3"><input type="text" ng-model="bTitle" class="form-control"  ></td>
+			<td class="tatd">작성자</td>
+			<td class="tatd"><input type="text"  ng-model="bWriter" class="form-control"  readonly ></td>			
+			</tr>
+			
+
+			<tr>
+				<td class="tatd">내용:</td>
+				<td colspan="5"><textarea cols="10" rows="10"
+				placeholder="내용을 입력하세요. " id ="uContent" ng-model="bContent"	class="form-control " style="resize: none;"></textarea></td>
+				</tr></td>
+				</tr>
+			</tbody>
+			
+			
+		</table>
+		
+		<button  ng-click="upOk()">수정완료</button>
+		<button ng-click="closeForm()">닫기</button>
+		<script type="text/javascript">
+		 var oEditors = [];
+			
+		</script>
+		
+	
+		</div>

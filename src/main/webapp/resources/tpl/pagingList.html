@@ -1,0 +1,9 @@
+	<div>
+		<ul class="pagination justify-content-center pagination-sm">
+			<li class="page-item"> <button  class="page-link"  ng-click ="pagemove(1)"> &lt;&lt; </button></li>
+			<li class="page-item"> <button  class="page-link" ng-click ="pagemove('pre')"> &lt; </button></li>
+			<li ng-repeat ="page in paging" class="page-item" > <button  class="page-link" ng-click="pagemove(page)">{{page}}</button> </li>
+			<li  class="page-item"> <button  class="page-link" ng-click ="pagemove('next')">&gt; </button> </li>
+			<li  class="page-item"> <button  class="page-link" ng-click ="pagemove('end')">  &gt;&gt; </button> </li>
+		</ul>
+		</div>

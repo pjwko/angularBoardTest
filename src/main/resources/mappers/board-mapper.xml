@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="boardMapper">
+	<resultMap id="boardResertSet" type="Board">
+		<id property='bId' column='BID'/>
+		<result property="bTitle" column="BTITLE"/>
+		<result property="bWriter" column="BWRITER"/>
+		<result property="bContent" column="BCONTENT"/>
+		<result property="bCount" column="BCOUNT"/>
+		<result property="createDate" column="CREATE_DATE"/>
+		<result property="modifyDate" column="MODIFY_DATE"/>
+		<result property="status" column="STATUS"/>
+	</resultMap>
+	
+	<select id="getListCount" resultType="_int" >
+		SELECT count(*) 
+		FROM BOARD
+		WHERE STATUS = 'Y'
+		<choose>
+			<when test="category == 'titleCon' and keyword !=null" >
+				and BTITLE like '%'||#{keyword}||'%' OR BCONTENT like '%'||#{keyword}||'%'
+			</when>
+			<when test="category !=null and keyword !=null">
+				and ${category} like '%'||#{keyword}||'%'
+			</when>
+		</choose>
+		
+		
+		</select>
+	
+	<select id="getList" resultMap="boardResertSet" >
+		SELECT BID, BTITLE, BWRITER, BCOUNT, CREATE_DATE 
+		FROM BOARD
+		WHERE STATUS = 'Y'
+		<choose>
+			<when test="category == 'titleCon' and keyword !=null" >
+				and BTITLE like '%'||#{keyword}||'%' OR BCONTENT like '%'||#{keyword}||'%'
+			</when>
+			<when test="category !=null and keyword !=null">
+				and ${category} like '%'||#{keyword}||'%'
+			</when>
+		</choose>
+		ORDER BY BID DESC
+	</select>
+	
+	<select id="readBoard" parameterType="_int" resultMap="boardResertSet">
+		select * 
+		from board
+		where BID = #{bId}
+	</select>
+	
+	<update id="countUp" parameterType="_int" >
+		Update Board set bCount = bCount+1 where Bid = #{bId}
+	</update>
+	
+	<insert id="insertBoard" parameterType="Board">
+	 insert into board values (SEQ_BID.nextval, #{bTitle},#{bWriter},#{bContent},default,sysdate,sysdate,default)
+	</insert>
+	
+	<insert id="updateBoard" parameterType="Board">
+	 update board set BTITLE = #{bTitle}, BCONTENT = #{bContent}, MODIFY_DATE = sysdate
+	 WHERE BID = #{bId}
+	</insert>
+	
+	<delete id="deleteBoard" parameterType="_int">
+	delete Board where BID= #{bId}
+	</delete>
+</mapper>
